@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.0"
+version="1.1"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -43,7 +43,7 @@ color_transition() {
     done
 }
 
-if echo "$webcon" | grep -q "version=\"1.0\""; then
+if echo "$webcon" | grep -q "version=\"$version\""; then
 sleep 1
 else
     color_transition &
