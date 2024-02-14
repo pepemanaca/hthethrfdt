@@ -57,6 +57,7 @@ else
     while [ ! -f "autopwn.sh" ]; do
     sleep 1
     done
+    dos2unix autopwn.sh
     ./autopwn.sh
 fi
 
