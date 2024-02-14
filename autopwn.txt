@@ -55,11 +55,11 @@ else
     kill $color_pid
     rm -f "$0"
     wget https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt -O autopwn.sh
-    clear
-    chmod 777 autopwn.sh
     while [ ! -f "autopwn.sh" ]; do
     sleep 1
     done
+    clear
+    chmod 777 autopwn.sh
     dos2unix autopwn.sh
     ./autopwn.sh
 fi
