@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.4"
+version="1.5"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -77,8 +77,8 @@ else
     replace 'windowsoutname="writer.exe"' "windowsoutname=\"$windowsoutname\"" -- autopwn.sh
 
     dos2unix autopwn.sh
-    ./autopwn.sh &
-    sleep 0.2
+    ./autopwn.sh
+    sleep 1
     kill $$
     exit
 fi
@@ -261,3 +261,6 @@ echo -e "\e[9;38m[\e[9;32m+\e[9;38m] LOG GUARDADO EN \e[9;32mAutoPWN/SSHlog.txt"
 if [ "$rootfound" = "true" ]; then
 	echo -e "\n\n[+] TODOS LOS USUARIOS CON ROOT Y SUS DATOS IMPORTANTES SE HAN GUARDADO EN AutoPWN/ROOTlog.txt" | lolcat
 fi
+
+pkill $0 >/dev/null 2>&1
+kill $$ >/dev/null 2>&1
