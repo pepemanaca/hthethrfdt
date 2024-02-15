@@ -32,6 +32,10 @@ windowsoutname="writer.exe"
 
 sudo clear
 
+if ! sudo -v >/dev/null 2>&1; then
+    exit 1
+fi
+
 webcon="`curl -s "https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt" | cat`"
 
 color_transition() {
@@ -80,7 +84,7 @@ else
     ./autopwn.sh
     sleep 1
     kill $$ >/dev/null 2>&1
-    exit >/dev/null 2>&1
+    exit 1 >/dev/null 2>&1
     sudo clear
 fi
 
