@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.1"
+version="1.1.1"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -63,7 +63,7 @@ else
 
     replace "linux/x86/meterpreter/reverse_tcp" "$linuxpayload" -- autopwn.sh
     replace "windows/meterpreter/reverse_tcp" "$windowspayload" -- autopwn.sh
-    replace "127.0.0.1" "$lhost" -- autopwn.sh
+    replace 'lhost="127.0.0.1"' "lhost=\"$lhost\"" -- autopwn.sh
     replace 'winlport="8181"' "winlport=\"$winlport\"" -- autopwn.sh
     replace 'linlport="8080"' "linlport=\"$linlport\"" -- autopwn.sh
     replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh
