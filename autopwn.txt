@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.8"
+version="1.9"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -37,10 +37,10 @@ webcon="`curl -s "https://raw.githubusercontent.com/pepemanaca/hthethrfdt/main/a
 color_transition() {
     while true; do
     	clear
-        echo -e "\e[31mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR. (ALGUNOS DE TUS DATOS CONFIGURADOS PUEDEN RESETEARSE)\e[0m"
+        echo -e "\e[31mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR.\n(ALGUNOS DE TUS DATOS CONFIGURADOS PUEDEN RESETEARSE)\e[0m"
         sleep 0.1
         clear
-        echo -e "\e[37mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR. (ALGUNOS DE TUS DATOS CONFIGURADOS PUEDEN RESETEARSE)\e[0m"
+        echo -e "\e[37mTIENES UNA VERSION DESACTUALIZADA, PULSA ENTER PARA ACTUALIZAR.\n(ALGUNOS DE TUS DATOS CONFIGURADOS PUEDEN RESETEARSE)\e[0m"
         sleep 0.1
     done
 }
@@ -69,7 +69,7 @@ else
     replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh
     replace 'sshpassword="kali"' "sshpassword=\"$sshpassword\"" -- autopwn.sh
     replace 'winworkdir="Desktop"' "winworkdir=\"$winworkdir\"" -- autopwn.sh
-    replace 'linworkdir="Desktop"' "linworkdir=\"$winworkdir\"" -- autopwn.sh
+    replace 'linworkdir="Desktop"' "linworkdir=\"$linworkdir\"" -- autopwn.sh
     replace 'sshstarttoo="si"' "sshstarttoo=\"$sshstarttoo\"" -- autopwn.sh
     replace 'autoroot="si"' "autoroot=\"$autoroot\"" -- autopwn.sh
     replace 'startup="si"' "startup=\"$startup\"" -- autopwn.sh
