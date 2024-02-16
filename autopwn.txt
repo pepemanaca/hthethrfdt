@@ -77,9 +77,9 @@ else
     dos2unix autopwn.sh > /dev/null 2>&1
     clear
     ./autopwn.sh
-    kill $$ > /dev/null 2>&1
     exit 1
-
+    exit
+    kill $$ > /dev/null 2>&1
     clear
     sudo clear
 
