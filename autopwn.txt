@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.4"
+version="1.5"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -127,12 +127,12 @@ if [ "$duckdns" = "si" ]; then
 	echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO ACTUALIZAR LA INFORMACION DEL SERVIDOR DNS (\e[9;32m$lhost\e[9;38m)\n\n"
 	response=$(curl -s "https://www.duckdns.org/update?domains=$lhost&token=$ducktoken&ip=$duckip")
 
-	if [ "$response" = "OK" ]; then
+	if echo "$response" | grep -q "OK"; then
 		ping_result=$(ping -c 1 "$lhost")
 
 		ip_obtenida=$(echo "$ping_result" | grep -oP '\(\K[^)]+')
     
-    		if [ "$ip_obtenida" = "$duckip" ]; then
+    		if echo "$ip_obtenida" | grep -q "$duckip"; then
 			echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INFORMACION ACTUALIZADA CORRECTAMENTE, EL DNS DEBERIA ESTAR LISTO PARA FUNCIONAR.\n\n"
     		else
         		echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL SERVIDOR DNS NO SE ACTUALIZO CORRECTAMENTE, SE USARA \e[9;32m$duckip\e[9;38m COMO LHOST\n\n"
