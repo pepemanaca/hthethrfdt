@@ -66,7 +66,6 @@ else
 
     replace "linux/x86/meterpreter/reverse_tcp" "$linuxpayload" -- autopwn.sh > /dev/null 2>&1
     replace "windows/meterpreter/reverse_tcp" "$windowspayload" -- autopwn.sh > /dev/null 2>&1
-    replace 'lhost="$youripalways"' "lhost=\"$lhost\"" -- autopwn.sh > /dev/null 2>&1
     replace 'winlport="8181"' "winlport=\"$winlport\"" -- autopwn.sh > /dev/null 2>&1
     replace 'linlport="8080"' "linlport=\"$linlport\"" -- autopwn.sh > /dev/null 2>&1
     replace 'sshuser="kali"' "sshuser=\"$sshuser\"" -- autopwn.sh > /dev/null 2>&1
@@ -80,7 +79,6 @@ else
     replace 'windowsoutname="writer.exe"' "windowsoutname=\"$windowsoutname\"" -- autopwn.sh > /dev/null 2>&1
     replace 'duckdns="no"' "duckdns=\"$duckdns\"" -- autopwn.sh > /dev/null 2>&1
     replace 'ducktoken=""' "ducktoken=\"$ducktoken\"" -- autopwn.sh > /dev/null 2>&1
-    replace 'duckip="$youripalways"' "duckip=\"$duckip\"" -- autopwn.sh > /dev/null 2>&1
     clear
     dos2unix autopwn.sh > /dev/null 2>&1
     clear
