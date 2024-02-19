@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.5"
+version="1.6"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -303,5 +303,7 @@ if [ "$rootfound" = "true" ]; then
 	echo -e "\n\n[+] TODOS LOS USUARIOS CON ROOT Y SUS DATOS IMPORTANTES SE HAN GUARDADO EN AutoPWN/ROOTlog.txt" | lolcat
 fi
 
+exit 1 >/dev/null 2>&1
+exit >/dev/null 2>&1
 pkill $0 >/dev/null 2>&1
 kill $$ >/dev/null 2>&1
