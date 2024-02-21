@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="1.6"
+version="1.7"
 
 # Variables
 youripalways=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -95,7 +95,7 @@ else
 	fi
 fi
 
-	sudo clear
+	sudo service ssh restart
 
 	if ! sudo -v >/dev/null 2>&1; then
     		exit 1
